@@ -1,0 +1,3 @@
+Based on index, where first date is 100
+Then it check how rate between currency and usd has changed
+This is not currency rate!
