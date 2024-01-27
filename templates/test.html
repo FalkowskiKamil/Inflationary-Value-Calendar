@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+
+{% block title %}test page{% endblock %}
+
+{% block content %}
+<h1><a href="{{ url_for('read_item', id=(id|int)+1) }}">Item ID: {{id}} + 1 = {{ (id|int)+1 }}</a></h1>
+<p>Test css</p>
+<script src="{{ url_for('static', path='/script.js') }}"></script>
+
+{% endblock %}

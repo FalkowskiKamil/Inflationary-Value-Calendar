@@ -44,7 +44,7 @@ currency_dict = {
     'Sweden': 'Swedish Krona (SEK)',
     'Switzerland': 'Swiss Franc (CHF)',
     'Turkey': 'Turkish Lira (TRY)',
-    'UK': 'British Pound (GBP)',
+    'Uk': 'British Pound (GBP)',
     'United States': 'United States Dollar (USD)',
     'SDR': 'Special Drawing Rights (SDR)'
 }
