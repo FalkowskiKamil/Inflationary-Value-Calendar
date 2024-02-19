@@ -17,6 +17,11 @@ def convert_country_to_currency(dataframe: pd.DataFrame) -> pd.DataFrame:
     return dataframe.rename(columns={dataframe.columns[0]: f"{currency_dict[dataframe.columns[0]]}"})
 
 
+def convert_currency_to_country(currency: str) -> str:
+    country = list(currency_dict.keys())[list(currency_dict.values()).index(currency)].replace(" ", "_")
+    return country
+
+
 def convert_usd_to_other_currency(dataframe: pd.DataFrame, country: str, start_date: date = 0, end_date: date = -1) -> pd.DataFrame:
     from manager.database import get_database_currency_rate_to_dollar
     dataframe_rate = get_database_currency_rate_to_dollar(country, start_date, end_date)

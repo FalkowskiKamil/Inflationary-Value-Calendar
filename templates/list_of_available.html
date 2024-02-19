@@ -1,0 +1,10 @@
+{% extends "index.html" %}{% block title %}
+{{ list_type|capitalize }}
+{% endblock %}
+
+
+{% block content %}
+{% for element in list %}
+    <p>{{ element }}</p>
+{% endfor %}
+{% endblock %}

@@ -1,5 +1,6 @@
 from manager.utils import concat_database_with_inflation, \
     convert_country_to_currency, \
+    convert_currency_to_country, \
     convert_usd_to_other_currency, \
     validation_date, \
     validation_null_value
@@ -29,6 +30,11 @@ def test_convert_country_to_currency():
 
 def test_convert_country_to_currency_length():
     assert len(convert_country_to_currency(DATAFRAME_CURRENCY)) == len(DATAFRAME_CURRENCY)
+
+
+# Convert currency to country
+def test_convert_currency_to_country():
+    assert convert_currency_to_country("Polish Złoty (PLN)") == "Poland"
 
 
 # Convert USD to other currency

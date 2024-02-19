@@ -4,9 +4,16 @@
     <title>{% block title %}Index{% endblock %}</title>
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
-<body>
-<h1>INDEX</h1>
+<body style="display: flex; flex-direction:column; justify-content: space-between; align-items: center;">
+<a href="{{ url_for('index') }}"><h1>INDEX</h1></a>
+
 {% block content %}
+<ol>
+    <li><a href="{{ url_for('database_main') }}">Databases</a></li>
+    <li><a href="{{ url_for('list_of_available_main') }}">List of available</a></li>
+    <li><a href="{{ url_for('plotly_view') }}">Plotly</a></li>
+</ol>
 {% endblock %}
+
 </body>
 </html>

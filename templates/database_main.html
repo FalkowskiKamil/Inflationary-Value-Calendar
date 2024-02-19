@@ -1,0 +1,41 @@
+{% extends "index.html" %}{% block title %}
+Database
+{% endblock %}
+
+{% block content %}
+
+
+<h2>Databases</h2>
+<form style="border: solid; padding: 10px" action="{{ url_for('databases') }}" method="POST">
+<p>Database type:</p>
+<select name="databaseType" id="databaseType">
+<option disabled selected value>Choose database type</option>
+{% for database in database_list %}
+    <option value="{{database}}">{{ database | replace("_", " ") | capitalize }}</option>
+{% endfor %}
+</select>
+<select name="databaseKey" id="databaseKey" class="hidden">
+<option disabled selected></option>
+</select>
+<br>
+<div id="stockNameContainer" class="hidden">
+    <label for="stockName">stock ticket:</label>
+    <input maxlength="6" name="stockName" id="stockName" size="4">
+</div>
+
+currency: <select name="currency" id="currency">
+    <option>USD</option>
+    <option>PLN</option>
+</select><br>
+
+start date:<br>
+<input type="number" min="1" max="12" step="1" value="1" size="4" name="startMonth" id="startMonth">
+<input type="number" min="1900" max="2023" step="1" value="2020" size="6" name="startYear" id="startYear"/><br>
+end date:<br>
+<input type="number" min="1" max="12" step="1" value="1" size="4" name="endMonth" id="endMonth">
+<input type="number" min="1900" max="2024" step="1" value="2024" size="6" name="endYear" id="endYear"/>
+<button type="submit" id="formSubmit" class="hidden">Continue</button>
+</form>
+
+<script src="{{ url_for('static', path='/script.js') }}"></script>
+{% endblock %}

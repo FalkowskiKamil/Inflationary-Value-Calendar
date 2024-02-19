@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{% block title %}
+Main List of Available
+{% endblock %}
+
+{% block content %}
+
+<h1>Main list of available:</h1>
+<ul>
+  {% for key in api_data %}
+    <li>
+      <a href="{{ url_for('list_of_available', list_type=key) }}">{{ key }}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}

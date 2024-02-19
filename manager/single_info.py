@@ -2,6 +2,11 @@ import yfinance as yf
 import pandas as pd
 
 
+def get_date_of_stock_data(stock: str) -> (str, str):
+    stock_data = yf.download(stock, interval="1mo", progress=False)["Close"]
+    return stock_data.index[0].date(), stock_data.index[-1].date()
+
+
 def get_stock_country(stock: str) -> str:
     country = yf.Ticker(stock).info["country"].lower()
     if " " in country:
@@ -12,11 +17,6 @@ def get_stock_country(stock: str) -> str:
 def get_stock_currency(stock: str) -> str:
     currency = yf.Ticker(stock).info["currency"]
     return currency
-
-
-def get_date_of_stock_data(stock: str) -> (str, str):
-    stock_data = yf.download(stock, interval="1mo", progress=False)["Close"]
-    return stock_data.index[0].date(), stock_data.index[-1].date()
 
 
 def get_stock_longname(stock: str) -> str:
