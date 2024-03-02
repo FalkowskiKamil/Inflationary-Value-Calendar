@@ -10,7 +10,7 @@ def test_list_of_country_head():
 
 
 def test_list_of_country_tail():
-    assert get_list_of_available_inflation_country_data()[-3:] == ["Turkey", "United_kingdom", "United_states"]
+    assert get_list_of_available_inflation_country_data()[-3:] == ["Turkey", "United kingdom", "United states"]
 
 
 def test_list_of_country_length():

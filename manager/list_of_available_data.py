@@ -14,7 +14,7 @@ def get_list_of_available_currency_data() -> dict:
 
 def get_list_of_available_inflation_country_data() -> list[str]:
     country_list = os.listdir("data/Inflation")
-    country_list = [file.split("_inflation")[0].capitalize() for file in country_list if file.endswith(".csv")]
+    country_list = [file.split("_inflation")[0].capitalize().replace("_", " ") for file in country_list if file.endswith(".csv")]
     return country_list
 
 

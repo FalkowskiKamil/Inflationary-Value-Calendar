@@ -12,7 +12,7 @@ function handleDatabaseTypeChange() {
     if (listType !== "stock") {
         selectBasedOnKey.classList.remove("hidden");
         stockInput.classList.add("hidden");
-        let apiUrl = `http://127.0.0.1:8000/api/list_of_available/${listType}`;
+        let apiUrl = `http://127.0.0.1:8000/api/list_of_available/?list_type=${listType}`;
         getKeyFromDatabases(apiUrl);
     } else {
         selectBasedOnKey.classList.add("hidden");
@@ -24,10 +24,17 @@ function handleDatabaseTypeChange() {
 async function getKeyFromDatabases(apiUrl) {
     let response = await fetch(apiUrl);
     let data = await response.json();
-    for (let i = 0; i < data.list.length; i++) {
+    // Parse the data if it's a JSON string
+    if (typeof data === 'string') {
+        data = JSON.parse(data);
+    }
+   let category = Object.keys(data)[0];
+
+    let dataList = data[category];
+    for (let i = 0; i < dataList.length; i++) {
         let newOption = document.createElement("option");
-        newOption.text = data.list[i];
-        newOption.value = data.list[i];
+        newOption.text = dataList[i];
+        newOption.value = dataList[i];
         selectBasedOnKey.appendChild(newOption);
     }
 }

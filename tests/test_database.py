@@ -1,8 +1,7 @@
 from manager.database import get_database_inflation,\
     get_database_stock,\
     get_database_prices,\
-    get_database_currency_rate_to_dollar,\
-    get_database_currency_index_to_dollar
+    get_database_currency_rate_to_dollar
 import pandas as pd
 
 COUNTRY = "Poland"
@@ -82,24 +81,3 @@ def test_database_currency_rate_column_name():
 
 def test_database_currency_rate_no_date():
     assert len(get_database_currency_rate_to_dollar(COUNTRY)) == 768
-
-
-# Currency index to dollar
-def test_database_currency_index_head():
-    assert get_database_currency_index_to_dollar(COUNTRY, START_DATE, END_DATE).iloc[:3].values.tolist() == [[711202.38095], [732512.5], [715902.17391]]
-
-
-def test_database_currency_index_tail():
-    assert get_database_currency_index_to_dollar(COUNTRY, START_DATE, END_DATE).iloc[-3:].values.tolist() == [[844363.75], [856754.34783], [918205.68182]]
-
-
-def test_database_currency_index_length():
-    assert len(get_database_currency_index_to_dollar(COUNTRY, START_DATE, END_DATE)) == 61
-
-
-def test_database_currency_index_column_name():
-    assert get_database_currency_index_to_dollar(COUNTRY, START_DATE, END_DATE).columns[0] == "Polish Złoty (PLN)"
-
-
-def test_database_currency_index_no_date():
-    assert len(get_database_currency_index_to_dollar(COUNTRY)) == 768

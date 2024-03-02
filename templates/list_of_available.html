@@ -1,10 +1,9 @@
 {% extends "index.html" %}{% block title %}
-{{ list_type|capitalize }}
+{{ (list.keys()|list)[0]|capitalize }}
 {% endblock %}
-
-
 {% block content %}
-{% for element in list %}
+<h1>{{ (list.keys()|list)[0]|capitalize }}</h1>
+{% for element in (list.values()|list)[0] %}
     <p>{{ element }}</p>
 {% endfor %}
 {% endblock %}

@@ -1,7 +1,9 @@
 import pandas as pd
+import yfinance as yf
 from data.currency_country import currency_dict
 import matplotlib.pyplot as plt
 from datetime import date
+import mpld3
 
 
 def concat_database_with_inflation(inflation_database: pd.DataFrame, multi_data: pd.DataFrame) -> pd.DataFrame:
@@ -22,6 +24,14 @@ def convert_currency_to_country(currency: str) -> str:
     return country
 
 
+def indexing_on_start_date(database: pd.DataFrame) -> pd.DataFrame:
+    denominator_of_values = database.iloc[0].values[0]
+    name_of_columns = database.columns[0]
+    database[f'{name_of_columns} indexed on {database.index[0].date()}'] = (database.iloc[:, 0] - denominator_of_values) / database.iloc[:, 0] * 100
+    database.drop(database.columns[0], axis=1, inplace=True)
+    return database
+
+
 def convert_usd_to_other_currency(dataframe: pd.DataFrame, country: str, start_date: date = 0, end_date: date = -1) -> pd.DataFrame:
     from manager.database import get_database_currency_rate_to_dollar
     dataframe_rate = get_database_currency_rate_to_dollar(country, start_date, end_date)
@@ -32,7 +42,7 @@ def convert_usd_to_other_currency(dataframe: pd.DataFrame, country: str, start_d
     return dataframe
 
 
-def plotting_database(database: pd.DataFrame) -> None:
+def plotting_database(database: pd.DataFrame) -> plt:
     fig, ax1 = plt.subplots()
     if database.columns[0] == "Inflation":
         # Part with index
@@ -54,17 +64,17 @@ def plotting_database(database: pd.DataFrame) -> None:
         ax1.legend(handles=lines, labels=[x for x in labels], loc="upper left")
         ax2.axhline(y=1, color="red", linestyle="'--'", linewidth=1)
         plt.title(f"{database.columns[1]} from {database.index[0].date()}")
-        plt.show()
-
     else:
         # If the first column is not "Inflation," plot the entire DataFrame on the left y-axis
-        database.plot(ax=ax1)
-        ax1.set_xlabel("Data")
-        ax1.set_ylabel("Index Value", color="tab:blue")
+        ax1.plot(database)
         ax1.tick_params(axis="y", labelcolor="tab:blue")
+        plt.title(database.columns[0])
+    html_plot = mpld3.fig_to_html(fig)
 
-        plt.title(",".join(database.columns))
-        plt.show()
+    # Close the Matplotlib figure to release resources
+    plt.close(fig)
+
+    return html_plot
 
 
 def validation_date(dataframe, start_date: date = 0, end_date: date = -1):
@@ -81,6 +91,17 @@ def validation_date(dataframe, start_date: date = 0, end_date: date = -1):
     return dataframe
 
 
-def validation_null_value(dataframe: pd.DataFrame) -> None:
+def validation_null_value(dataframe: pd.DataFrame):
     if dataframe.empty or dataframe.isna().any().any():
-        raise ValueError("Null value in database!")
+        return "Error in database"
+    else:
+        return dataframe
+
+
+def validate_stock(func):
+    def wrapper(stock):
+        if 'country' in yf.Ticker(stock).info.keys():
+            return func(stock)
+        else:
+            return "No stock info"
+    return wrapper

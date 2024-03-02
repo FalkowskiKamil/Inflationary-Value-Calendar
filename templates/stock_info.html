@@ -1,0 +1,7 @@
+{% extends "index.html" %}{% block title %}
+{{api_data['stock']}}
+{% endblock %}
+{% block content %}
+
+<p>{{ (api_data.values()|list)[0]}} {{ (api_data.keys()|list)[1] }} - {{ ((api_data.values()|list)[1]) }}</p>
+{% endblock %}
