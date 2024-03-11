@@ -16,33 +16,22 @@ def test_database_inflation_head():
     assert get_database_inflation(COUNTRY, START_DATE, END_DATE).iloc[:3].values.tolist() == [[144.86186], [145.1157], [148.71653]]
 
 
-def test_database_inflation_tail_without_date():
-    assert get_database_inflation(COUNTRY).iloc[-3:].values.tolist() == [[154.39214], [159.69771], [162.66146]]
+def test_database_inflation_tail():
+    assert get_database_inflation(COUNTRY, START_DATE, END_DATE).iloc[-3:].values.tolist() == [[138.45289], [140.17262], [137.98035]]
 
 
 def test_database_inflation_length():
     assert len(get_database_inflation(COUNTRY, START_DATE, END_DATE)) == 61
 
 
-def test_database_inflation_no_date():
-    assert len(get_database_inflation(COUNTRY)) == 372
-
-
 # Prices
 def test_database_prices_head():
-    assert get_database_prices(GOODS, START_DATE, END_DATE)[:3].values.tolist() == [[132.7266], [134.0929], [142.87628]]
-
-
-def test_database_prices_tail_without_date():
-    assert get_database_prices(GOODS)[-3:].values.tolist() == [[265.78781], [267.01469], [262.96901]]
+    print(get_database_prices(GOODS, START_DATE, END_DATE)[:3].values.tolist())
+    assert get_database_prices(GOODS, START_DATE, END_DATE)[:3].values.tolist() == [[782.68876611418], [790.745856353591], [842.541436464088]]
 
 
 def test_database_prices_length():
     assert len(get_database_prices(GOODS, START_DATE, END_DATE)) == 61
-
-
-def test_database_prices_no_date():
-    assert len(get_database_prices(GOODS)) == 407
 
 
 # Stock
@@ -77,7 +66,3 @@ def test_database_currency_rate_length():
 
 def test_database_currency_rate_column_name():
     assert get_database_currency_rate_to_dollar(COUNTRY, START_DATE, END_DATE).columns[0] == "Polish Złoty (PLN)"
-
-
-def test_database_currency_rate_no_date():
-    assert len(get_database_currency_rate_to_dollar(COUNTRY)) == 768

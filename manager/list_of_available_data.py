@@ -20,5 +20,5 @@ def get_list_of_available_inflation_country_data() -> list[str]:
 
 def get_list_of_available_goods_prices_data() -> list[str]:
     goods_list = os.listdir("data/Prices")
-    goods_list = [file.split("_")[0].capitalize() for file in goods_list if file.endswith(".csv")]
+    goods_list = [file.split(".csv")[0].capitalize().replace("_", " ") for file in goods_list if file.endswith(".csv")]
     return goods_list

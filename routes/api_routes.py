@@ -49,22 +49,23 @@ async def api_databases(
         end_date = pd.to_datetime(f"{endYear}-{endMonth}-1").date()
     else:
         return (await api_index())["Available API Data"]["Databases"]
+
     if databaseType == "inflation" or databaseType == "country":
         data_list = database.get_database_inflation(databaseKey, start_date, end_date)
-        data_list = utils.indexing_on_start_date(data_list)
     elif databaseType == "goods":
-        data_list = database.get_database_prices(databaseKey, start_date, end_date)
+        data_list = database.get_database_prices(databaseKey.replace(" ", "_"), start_date, end_date)
     elif databaseType == "stock":
         data_list = database.get_database_stock(stockName, start_date, end_date)
     elif databaseType == "currency":
-        data_list = database.get_database_currency_rate_to_dollar(databaseKey, start_date, end_date)
+        country = utils.finding_country_by_currency(databaseKey)
+        data_list = database.get_database_currency_rate_to_dollar(country, start_date, end_date)
     else:
         data_list = "Error"
     return data_list
 
 
-@router_api.get("/list_of_available/", tags=["api"])
-async def api_list_of_available(list_type: str = "main"):
+@router_api.post("/list_of_available/", tags=["api"])
+async def api_list_of_available(list_type: str = Form(None)):
     if list_type == "country" or list_type == "inflation":
         data_list = list_of_available_data.get_list_of_available_inflation_country_data()
     elif list_type == "goods":
@@ -79,24 +80,65 @@ async def api_list_of_available(list_type: str = "main"):
 
 @router_api.post("/converted_data", tags=["api"])
 async def api_plotted_data(
-        mainDatabaseType: str = Form(None),
-        mainDatabaseTitle: str = Form(None),
-        extraDatabaseType: str = Form(None),
-        extraDatabaseTitle: str = Form(None)
+        mainDataframeType: str = Form(None),
+        mainDataframeTitle: str = Form(None),
+        converterCategory: str = Form(None),
+        to_currency: str = Form(None),
+        startMonth: int = Form(None),
+        startYear: int = Form(None),
+        endMonth: int = Form(None),
+        endYear: int = Form(None),
 
 ):
-    if mainDatabaseType == "goods":
-        db = database.get_database_prices(mainDatabaseTitle)
-    elif mainDatabaseType == "stock":
-        db = database.get_database_stock(mainDatabaseTitle)
-    elif mainDatabaseType == "currency":
-        db = database.get_database_currency_rate_to_dollar(mainDatabaseTitle)
-    elif mainDatabaseType == "inflation":
-        db = database.get_database_inflation(mainDatabaseTitle)
-    else:
-        return "No such databaseType"
-    if extraDatabaseType == "currency":
-        # Obecnie jest chyba zrobione tylko dla stoka to conver_currency_to_country
-        country = utils.convert_currency_to_country(extraDatabaseTitle)
-        db2 = utils.convert_usd_to_other_currency(db, country)
-    return {"db2": db2}
+    start_dataframe_date = None
+    end_dataframe_date = None
+
+    if startMonth:
+        start_dataframe_date = pd.to_datetime(f"{startYear}-{startMonth}-1").date()
+        end_dataframe_date = pd.to_datetime(f"{endYear}-{endMonth}-1").date()
+
+    if converterCategory == "currency_exchange":
+        dataframe = utils.finding_exchanging_rate(mainDataframeTitle, to_currency, start_dataframe_date, end_dataframe_date)
+        return dataframe
+    elif converterCategory == "goods_currency_exchange":
+        goods_dataframe = database.get_database_prices(mainDataframeTitle, start_dataframe_date, end_dataframe_date)
+        currency_exchange_rate_dataframe = utils.finding_exchanging_rate("USD", to_currency, start_dataframe_date, end_dataframe_date)
+        dataframe = utils.concat_dataframe_with_exchange_rate(goods_dataframe, currency_exchange_rate_dataframe)
+        return dataframe
+    elif converterCategory == "stock_currency_exchange":
+        stock_dataframe = database.get_database_stock(mainDataframeTitle, start_dataframe_date, end_dataframe_date)
+        stock_currency = single_info.get_stock_currency(mainDataframeTitle)
+        currency_exchange_rate_dataframe = utils.finding_exchanging_rate(stock_currency, to_currency, start_dataframe_date, end_dataframe_date)
+        dataframe = utils.concat_dataframe_with_exchange_rate(stock_dataframe, currency_exchange_rate_dataframe)
+        return dataframe
+
+    # Inflation
+    elif converterCategory == "currency_rate_to_dollar_with_inflation":
+        country = single_info.finding_country_by_currency(mainDataframeTitle)
+        dataframe_rate = utils.finding_exchanging_rate(mainDataframeTitle, "USD", start_dataframe_date, end_dataframe_date)
+        dataframe_inflation = database.get_database_inflation(country, start_dataframe_date, end_dataframe_date)
+        dataframe_inflation = utils.indexing_on_start_date(dataframe_inflation)
+        dataframe_full = utils.concat_dataframe_with_inflation(dataframe_inflation, dataframe_rate)
+        return dataframe_full
+
+    elif converterCategory == "goods_value_with_inflation":
+        dataframe = database.get_database_prices(mainDataframeTitle, start_dataframe_date, end_dataframe_date)
+        exchange_rate = utils.finding_exchanging_rate("USD", to_currency, start_dataframe_date, end_dataframe_date)
+        dataframe = utils.concat_dataframe_with_exchange_rate(dataframe, exchange_rate)
+        country = utils.finding_country_by_currency(to_currency)
+        dataframe_inflation = database.get_database_inflation(country, start_dataframe_date, end_dataframe_date)
+        dataframe_inflation = utils.indexing_on_start_date(dataframe_inflation)
+        dataframe = utils.concat_dataframe_with_inflation(dataframe_inflation, dataframe)
+        return dataframe
+
+    elif converterCategory == "stock_value_with_inflation":
+        dataframe = database.get_database_stock(mainDataframeTitle, start_dataframe_date, end_dataframe_date)
+        currency = single_info.get_stock_currency(mainDataframeTitle)
+        country = single_info.finding_country_by_currency(currency)
+        if currency != to_currency:
+            exchanging_rate_dataframe = utils.finding_exchanging_rate(currency, to_currency, start_dataframe_date, end_dataframe_date)
+            dataframe = utils.concat_dataframe_with_exchange_rate(dataframe, exchanging_rate_dataframe)
+        dataframe_inflation = database.get_database_inflation(country, start_dataframe_date, end_dataframe_date)
+        dataframe_inflation = utils.indexing_on_start_date(dataframe_inflation)
+        dataframe = utils.concat_dataframe_with_inflation(dataframe_inflation, dataframe)
+        return dataframe

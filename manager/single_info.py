@@ -1,6 +1,6 @@
 import yfinance as yf
-import pandas as pd
-from .utils import validate_stock
+from manager.validators import validate_stock
+from data.currency_country import currency_dict, currency_dict_short
 
 
 @validate_stock
@@ -35,8 +35,11 @@ def get_stock_last_value(stock_name: str) -> float:
     return stock_data.history(period="1d")["Close"].iloc[0]
 
 
-def get_value_of_inflation_during_time(dataframe: pd.DataFrame) -> float:
-    start_value = dataframe.iloc[0]
-    end_value = dataframe.iloc[-1]
-    difference = ((end_value - start_value) / start_value)*100
-    return difference.values[0]
+def finding_currency_by_country(country: str) -> str:
+    currency = currency_dict[country]
+    return currency
+
+
+def finding_country_by_currency(currency: str) -> str:
+    country = list(currency_dict_short.keys())[list(currency_dict_short.values()).index(currency)].replace(" ", "_")
+    return country

@@ -12,8 +12,8 @@ function handleDatabaseTypeChange() {
     if (listType !== "stock") {
         selectBasedOnKey.classList.remove("hidden");
         stockInput.classList.add("hidden");
-        let apiUrl = `http://127.0.0.1:8000/api/list_of_available/?list_type=${listType}`;
-        getKeyFromDatabases(apiUrl);
+        let apiUrl = `http://127.0.0.1:8000/api/list_of_available/`;
+        getKeyFromDatabases(apiUrl, listType);
     } else {
         selectBasedOnKey.classList.add("hidden");
         stockInput.classList.remove("hidden");
@@ -21,16 +21,19 @@ function handleDatabaseTypeChange() {
 }
 
 // Function to fetch keys from databases
-async function getKeyFromDatabases(apiUrl) {
-    let response = await fetch(apiUrl);
+async function getKeyFromDatabases(apiUrl, listType) {
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `list_type=${encodeURIComponent(listType)}`,
+    });
     let data = await response.json();
-    // Parse the data if it's a JSON string
-    if (typeof data === 'string') {
-        data = JSON.parse(data);
-    }
-   let category = Object.keys(data)[0];
 
+    let category = Object.keys(data)[0];
     let dataList = data[category];
+
     for (let i = 0; i < dataList.length; i++) {
         let newOption = document.createElement("option");
         newOption.text = dataList[i];

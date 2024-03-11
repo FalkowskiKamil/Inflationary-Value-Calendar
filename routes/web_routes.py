@@ -26,7 +26,7 @@ async def databases(
     api_data=Depends(api_databases)
 ):
     if type(api_data) is pd.DataFrame:
-        api_data = utils.plotting_database(api_data)
+        api_data = utils.plotting_dataframe(api_data)
     return templates.TemplateResponse("database.html", {"request": request, "database": api_data})
 
 
@@ -39,19 +39,10 @@ async def list_of_available_main(request: Request, api_data: dict = Depends(api_
     )
 
 
-@router_web.get("/list_of_available/{list_type}", response_class=HTMLResponse, tags=["web"])
-async def list_of_available(request: Request, list_type: str):
+@router_web.post("/list_of_available/", response_class=HTMLResponse, tags=["web"])
+async def list_of_available(request: Request, api_data: dict = Depends(api_list_of_available)):
     return templates.TemplateResponse(
-        request=request, name="list_of_available.html", context={"list": await api_list_of_available(list_type)}
-    )
-
-
-@router_web.get("/stock_info/", response_class=HTMLResponse, tags=["web"])
-async def stock_info(request: Request, api_data: dict = Depends(api_stock)):
-    return templates.TemplateResponse(
-        request=request,
-        name="stock_info_main.html",
-        context={"api_data": api_data["Available info"]}
+        request=request, name="list_of_available.html", context={"list": api_data}
     )
 
 
@@ -61,6 +52,15 @@ async def stock_info_main(request: Request, api_data: dict = Depends(api_stock))
         request=request,
         name="stock_info.html",
         context={"api_data": api_data}
+    )
+
+
+@router_web.get("/stock_info/", response_class=HTMLResponse, tags=["web"])
+async def stock_info(request: Request, api_data: dict = Depends(api_stock)):
+    return templates.TemplateResponse(
+        request=request,
+        name="stock_info_main.html",
+        context={"api_data": api_data["Available info"]}
     )
 
 

@@ -1,1 +1,0 @@
-This database is currency rate based to usd

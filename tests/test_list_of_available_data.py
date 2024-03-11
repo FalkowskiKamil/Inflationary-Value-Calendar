@@ -27,11 +27,11 @@ def test_list_of_goods_head():
 
 
 def test_list_of_goods_tail():
-    assert get_list_of_available_goods_prices_data()[-3:] == ["Uranium", "Wheat", "Wti"]
+    assert get_list_of_available_goods_prices_data()[-3:] == ["Wheat", "Wool fine", "Wti"]
 
 
 def test_list_of_goods_length():
-    assert len(get_list_of_available_goods_prices_data()) == 24
+    assert len(get_list_of_available_goods_prices_data()) == 30
 
 
 # Currency part

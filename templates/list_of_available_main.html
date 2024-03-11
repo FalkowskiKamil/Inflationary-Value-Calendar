@@ -7,11 +7,12 @@ Main List of Available
 {% block content %}
 
 <h1>Main list of available:</h1>
-<ul>
+<form action="{{ url_for('list_of_available') }}" method="post">
+  <select name="list_type" id="list_type">
   {% for key in api_data %}
-    <li>
-      <a href="{{ url_for('list_of_available', list_type=key) }}">{{ key }}</a>
-    </li>
+      <option value="{{ key }}">{{ key }}</option>
   {% endfor %}
-</ul>
+    </select>
+  <button type="submit">Submit</button>
+</form>
 {% endblock %}
