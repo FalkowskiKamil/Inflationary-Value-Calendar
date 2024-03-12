@@ -1,10 +1,5 @@
-{% extends "index.html" %}{% block title %}
-Database
-{% endblock %}
-
+{% extends "index.html" %}{% block title %}Database{% endblock %}
 {% block content %}
-
-
 <h2>Databases</h2>
 <form style="border: solid; padding: 10px" action="{{ url_for('databases') }}" method="POST">
 <p>Database type:</p>

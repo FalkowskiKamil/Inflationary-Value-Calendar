@@ -22,6 +22,7 @@ def concat_dataframe_with_exchange_rate(main_dataframe: pd.DataFrame, exchange_d
     main_column = main_dataframe.iloc[:, 0].astype(float)
     exchange_column = exchange_dataframe.iloc[:, 0].astype(float)
     exchange_dataframe_name = exchange_column.name
+
     if "dollar" in main_column.name:
         main_dataframe_name = main_column.name.split(" in")[0].replace("dollar", exchange_dataframe_name)
         dataframe = pd.DataFrame({main_dataframe_name: main_column * exchange_column})
@@ -49,37 +50,44 @@ def convert_currency_to_other_currency(from_dataframe: pd.DataFrame, to_datafram
     return dataframe
 
 
-def finding_exchanging_rate(from_currency: str, to_currency: str, start_dataframe_date: date, end_dataframe_date: date) -> pd.DataFrame:
-    if from_currency == to_currency:
+def convert_form_date_to_pandas_date_type(startYear: int, startMonth: int, endYear: int, endMonth: int) -> list:
+    start_date = pd.to_datetime(f"{startYear}-{startMonth}-1").date()
+    end_date = pd.to_datetime(f"{endYear}-{endMonth}-1").date()
+    return [start_date, end_date]
+
+
+def finding_exchanging_rate(from_currency: str, currency_target: str, start_dataframe_date: date, end_dataframe_date: date) -> pd.DataFrame:
+    if from_currency == currency_target:
         date_range = pd.date_range(start=start_dataframe_date, end=end_dataframe_date, freq='MS', normalize=True)
         dataframe = pd.DataFrame(index=date_range, columns=[f'{from_currency}'])
         dataframe[from_currency] = ['1']*len(date_range)
         dataframe = pd.DataFrame(dataframe)
         return dataframe
 
-    elif from_currency != "USD" and to_currency == "USD":
+    elif from_currency != "USD" and currency_target == "USD":
         dataframe = convert_currency_to_usd(from_currency, start_dataframe_date, end_dataframe_date)
         return dataframe
 
-    elif from_currency == "USD" and to_currency != "USD":
-        country = finding_country_by_currency(to_currency)
+    elif from_currency == "USD" and currency_target != "USD":
+        country = finding_country_by_currency(currency_target)
         dataframe = get_database_currency_rate_to_dollar(country, start_dataframe_date, end_dataframe_date)
         return dataframe
 
-    elif from_currency != "USD" and to_currency != "USD":
+    elif from_currency != "USD" and currency_target != "USD":
         from_country = finding_country_by_currency(from_currency)
-        to_country = finding_country_by_currency(to_currency)
+        to_country = finding_country_by_currency(currency_target)
         from_country_dataframe = get_database_currency_rate_to_dollar(from_country, start_dataframe_date, end_dataframe_date)
         to_country_dataframe = get_database_currency_rate_to_dollar(to_country, start_dataframe_date, end_dataframe_date)
         dataframe = convert_currency_to_other_currency(from_country_dataframe, to_country_dataframe)
-        return pd.DataFrame(dataframe, columns=[to_currency])
+        return pd.DataFrame(dataframe, columns=[currency_target])
 
 
 def indexing_on_start_date(dataframe: pd.DataFrame) -> pd.DataFrame:
     denominator_of_values = dataframe.iloc[0].values[0]
     name_of_columns = dataframe.columns[0]
-    dataframe[f'{name_of_columns} indexed on {dataframe.index[0].date()}'] = 1 + (dataframe.iloc[:, 0] - denominator_of_values) / dataframe.iloc[:, 0]
-    dataframe.drop(dataframe.columns[0], axis=1, inplace=True)
+    dataframe = pd.DataFrame({f'{name_of_columns} indexed on {dataframe.index[0].date()}': 1 + (dataframe.iloc[:, 0] - denominator_of_values) / dataframe.iloc[:, 0]})
+    #dataframe[f'{name_of_columns} indexed on {dataframe.index[0].date()}'] = 1 + (dataframe.iloc[:, 0] - denominator_of_values) / dataframe.iloc[:, 0]
+    #dataframe.drop(dataframe.columns[0], axis=1, inplace=True)
     return dataframe
 
 

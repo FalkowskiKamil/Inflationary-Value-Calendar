@@ -45,3 +45,17 @@ def test_list_of_currency_tail():
 
 def test_list_of_currency_length():
     assert len(get_list_of_available_country_with_currency_data()) == 51
+
+
+# Inflation part
+def test_list_of_inflation_country_head():
+    assert get_list_of_available_inflation_country_data()[:3] == ["Australia", "Austria", "Belgium"]
+
+
+def test_list_of_inflation_country_tail():
+    assert get_list_of_available_inflation_country_data()[-3:] == ["Turkey", "United kingdom", "United states"]
+
+
+def test_list_of_inflation_country_length():
+    assert len(get_list_of_available_inflation_country_data()) == 43
+

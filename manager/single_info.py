@@ -1,6 +1,6 @@
 import yfinance as yf
 from manager.validators import validate_stock
-from data.currency_country import currency_dict, currency_dict_short
+from data.currency_country import currency_dict_short
 
 
 @validate_stock
@@ -33,11 +33,6 @@ def get_stock_longname(stock: str) -> str:
 def get_stock_last_value(stock_name: str) -> float:
     stock_data = yf.Ticker(stock_name)
     return stock_data.history(period="1d")["Close"].iloc[0]
-
-
-def finding_currency_by_country(country: str) -> str:
-    currency = currency_dict[country]
-    return currency
 
 
 def finding_country_by_currency(currency: str) -> str:

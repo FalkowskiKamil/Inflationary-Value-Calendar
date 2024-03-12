@@ -3,7 +3,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import pandas as pd
 from manager import utils
-from routes.api_routes import api_index, api_databases, api_stock, api_list_of_available
+from routes.api_routes import api_index, api_databases, \
+    api_stock, api_list_of_available
 
 router_web = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -27,7 +28,9 @@ async def databases(
 ):
     if type(api_data) is pd.DataFrame:
         api_data = utils.plotting_dataframe(api_data)
-    return templates.TemplateResponse("database.html", {"request": request, "database": api_data})
+    return templates.TemplateResponse(request=request,
+                                      name="database.html",
+                                      context={"database": api_data})
 
 
 @router_web.get("/list_of_available/", response_class=HTMLResponse, tags=["web"])
@@ -46,21 +49,21 @@ async def list_of_available(request: Request, api_data: dict = Depends(api_list_
     )
 
 
-@router_web.post("/stock_info/", response_class=HTMLResponse, tags=["web"])
+@router_web.get("/stock_info/", response_class=HTMLResponse, tags=["web"])
 async def stock_info_main(request: Request, api_data: dict = Depends(api_stock)):
     return templates.TemplateResponse(
         request=request,
-        name="stock_info.html",
+        name="stock_info_main.html",
         context={"api_data": api_data}
     )
 
 
-@router_web.get("/stock_info/", response_class=HTMLResponse, tags=["web"])
+@router_web.post("/stock_info/", response_class=HTMLResponse, tags=["web"])
 async def stock_info(request: Request, api_data: dict = Depends(api_stock)):
     return templates.TemplateResponse(
         request=request,
-        name="stock_info_main.html",
-        context={"api_data": api_data["Available info"]}
+        name="stock_info.html",
+        context={"api_data": api_data}
     )
 
 
