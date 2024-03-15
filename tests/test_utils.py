@@ -37,6 +37,8 @@ def test_concat_dataframe_with_exchange_rate():
 # Convert currency to USD
 def test_convert_currency_to_usd():
     dataframe = convert_currency_to_usd(SECOND_CURRENCY, START_DATE, END_DATE)
+    print(dataframe.iloc[0])
+    print(dataframe.iloc[-1])
     assert dataframe.head(1).values.tolist() == [[0.2611013481911352]]
 
 

@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 import pandas as pd
 from manager import utils
 from routes.api_routes import api_index, api_databases, \
-    api_stock, api_list_of_available
+    api_stock, api_options
 
 router_web = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -33,19 +33,19 @@ async def databases(
                                       context={"database": api_data})
 
 
-@router_web.get("/list_of_available/", response_class=HTMLResponse, tags=["web"])
-async def list_of_available_main(request: Request, api_data: dict = Depends(api_index)):
+@router_web.get("/options/", response_class=HTMLResponse, tags=["web"])
+async def options_main(request: Request, api_data: dict = Depends(api_index)):
     return templates.TemplateResponse(
         request=request,
-        name="list_of_available_main.html",
-        context={"api_data": api_data["Available API Data"]["List_of_available"]}
+        name="options_main.html",
+        context={"api_data": api_data["Available API Data"]["Options"]}
     )
 
 
-@router_web.post("/list_of_available/", response_class=HTMLResponse, tags=["web"])
-async def list_of_available(request: Request, api_data: dict = Depends(api_list_of_available)):
+@router_web.post("/options/", response_class=HTMLResponse, tags=["web"])
+async def options(request: Request, api_data: dict = Depends(api_options)):
     return templates.TemplateResponse(
-        request=request, name="list_of_available.html", context={"list": api_data}
+        request=request, name="options.html", context={"list": api_data}
     )
 
 

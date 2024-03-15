@@ -10,7 +10,7 @@ def test_api_index():
     assert response.status_code == 200
     assert response.json()["Available API Data"] == {
         "Databases": ["inflation", "goods", "stock", "currency"],
-        "List_of_available": ["country", "goods", "currency"],
+        "Options": ["country", "goods", "currency"],
         "Single_info": ["stock date", "country", "currency", "long name", "last value"],
         "Type of plotting database": {"exchange": ["currency_exchang", "goods_currency_exchange",
                                                    "stock_currency_exchange"],
@@ -47,10 +47,10 @@ def test_api_database():
 
 
 def test_api_list_of_available():
-    response = client.post("/api/list_of_available/")
+    response = client.post("/api/options/")
     assert response.status_code == 200
     assert response.json() == {"null": ["country", "goods", "currency"]}
-    response = client.post("/api/list_of_available/", data={"list_type": "country"})
+    response = client.post("/api/options/", data={"list_type": "country"})
     assert response.status_code == 200
     assert response.json() == {'country': ['Australia', 'Austria', 'Belgium',
                                            'Brazil', 'Canada', 'Chile', 'China', 'Columbia', 'Czech', 'Denmark',

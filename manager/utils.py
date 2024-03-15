@@ -86,8 +86,6 @@ def indexing_on_start_date(dataframe: pd.DataFrame) -> pd.DataFrame:
     denominator_of_values = dataframe.iloc[0].values[0]
     name_of_columns = dataframe.columns[0]
     dataframe = pd.DataFrame({f'{name_of_columns} indexed on {dataframe.index[0].date()}': 1 + (dataframe.iloc[:, 0] - denominator_of_values) / dataframe.iloc[:, 0]})
-    #dataframe[f'{name_of_columns} indexed on {dataframe.index[0].date()}'] = 1 + (dataframe.iloc[:, 0] - denominator_of_values) / dataframe.iloc[:, 0]
-    #dataframe.drop(dataframe.columns[0], axis=1, inplace=True)
     return dataframe
 
 

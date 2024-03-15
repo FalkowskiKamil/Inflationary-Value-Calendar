@@ -1,4 +1,4 @@
-from manager.collectors import api_stock_collector, api_list_of_available_collector,\
+from manager.collectors import api_stock_collector, api_options_collector,\
     api_databases_collector,  api_exchange_converter_collector, \
     api_inflation_converter_collector
 
@@ -130,23 +130,23 @@ def test_api_stock_collector_invalid():
 
 # Api list of available collector
 def test_api_list_of_available_collector_country():
-    result = api_list_of_available_collector("country")
+    result = api_options_collector("country")
     assert len(result) == 43
     assert result[0] == "Australia"
 
 
 def test_api_list_of_available_collector_goods():
-    result = api_list_of_available_collector("goods")
+    result = api_options_collector("goods")
     assert len(result) == 30
     assert result[0] == "Aluminum"
 
 
 def test_api_list_of_available_collector_currency():
-    result = api_list_of_available_collector("currency")
+    result = api_options_collector("currency")
     assert len(result) == 33
     assert result[0] == "Argentine Peso (ARS)"
 
 
 def test_api_list_of_available_collector_invalid():
-    result = api_list_of_available_collector("Invalid")
+    result = api_options_collector("Invalid")
     assert result is None

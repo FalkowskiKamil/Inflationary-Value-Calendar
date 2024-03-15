@@ -7,7 +7,7 @@ Main List of Available
 {% block content %}
 
 <h1>Main list of available:</h1>
-<form action="{{ url_for('list_of_available') }}" method="post">
+<form action="{{ url_for('options') }}" method="post">
   <select name="list_type" id="list_type">
   {% for key in api_data %}
       <option value="{{ key }}">{{ key }}</option>

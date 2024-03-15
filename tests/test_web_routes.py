@@ -33,15 +33,15 @@ def test_web_database():
     assert "<title>\nDatabase\n</title>" in response.text
 
 
-def test_web_list_of_available_main():
-    response = client.get("/list_of_available/")
+def test_web_options_main():
+    response = client.get("/options/")
     assert response.status_code == 200
     assert "<!DOCTYPE html>" in response.text
     assert "<title>\nMain List of Available\n</title>" in response.text
 
 
-def test_web_list_of_available():
-    response = client.post("/list_of_available/", data={"list_type": "country"})
+def test_web_options():
+    response = client.post("/options/", data={"list_type": "country"})
     assert response.status_code == 200
     assert "<!DOCTYPE html>" in response.text
     assert "<title>\nCountry\n</title>" in response.text
